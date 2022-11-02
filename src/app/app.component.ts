@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { SignInService } from './sign-in.service';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +8,19 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'nav-bar-example';
+  private signInSubscription = Subscription.EMPTY;
+  public signedIn: boolean = false;
+  constructor(private signInService: SignInService) {}
+  title = 'Nav';
+  ngOnInit() {
+    this.signInSubscription = this.signInService.$signedIn.subscribe(
+      (signedIn: boolean) => {
+        this.signedIn = signedIn;
+        console.log('Sign in event', this.signedIn);
+      });
+    }
+
+    signOut() {
+      this.signInService.$signedIn.next(false);
+    }
 }
